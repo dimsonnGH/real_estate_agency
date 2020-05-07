@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
 class Flat(models.Model):
-    owner = models.CharField("ФИО владельца", max_length=200)
-    owners_phonenumber = models.CharField("Номер владельца", max_length=20)
     created_at = models.DateTimeField("Когда создано объявление", default=timezone.now, db_index=True)
     
     description = models.TextField("Текст объявления", blank=True)
@@ -26,7 +24,6 @@ class Flat(models.Model):
     new_building = models.NullBooleanField("Новостройка", db_index=True)
 
     liked_by = models.ManyToManyField(User, related_name="liked_posts")
-    owner_phone_pure = PhoneNumberField("Нормализованный номер владельца", blank=True)
 
 
     def __str__(self):
@@ -35,8 +32,18 @@ class Flat(models.Model):
 
 class Complaint(models.Model):
     """Жалоба"""
-    flat = models.ForeignKey(Flat, on_delete=models.CASCADE, verbose_name='квартира', related_name='сomplaints')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='клиент', related_name='сomplaints')
-    description = models.TextField(verbose_name='текст жалобы')
+    flat = models.ForeignKey(Flat, on_delete=models.CASCADE, verbose_name='Квартира', related_name='сomplaints')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Клиент', related_name='сomplaints')
+    description = models.TextField(verbose_name='Текст жалобы')
 
-    #
+    def __str__(self):
+        return f"{self.flat} - {self.user}"
+
+class Owner(models.Model) :
+    """Владельцы квартир"""
+    full_name = models.CharField("ФИО владельца", max_length=200, db_index=True)
+    owner_phone_pure = PhoneNumberField("Нормализованный номер владельца", blank=True, db_index=True)
+    flats = models.ManyToManyField(Flat, verbose_name='Квартиры в собственности', related_name="owners")
+
+    def __str__(self) :
+        return self.full_name
