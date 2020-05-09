@@ -9,13 +9,14 @@ def create_owners(apps, schema_editor):
     flats = Flat.objects.all()
     Owner = apps.get_model('property', 'Owner')
     for flat in flats:
-        (owner, created) = Owner.objects.get_or_create(
+        creating_result = Owner.objects.get_or_create(
             full_name=flat.owner,
             owner_phone_pure=flat.owner_phone_pure,
             defaults={
                 'owners_phonenumber': flat.owners_phonenumber,
             }
         )
+        owner = creating_result.owner
         owner.flats.set([flat])
 
 def create_owners_back(apps, schema_editor):

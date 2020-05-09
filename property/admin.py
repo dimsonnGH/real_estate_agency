@@ -12,8 +12,8 @@ class FlatAdmin(admin.ModelAdmin):
     raw_id_fields = ('liked_by', 'owners')
 
 class ComplaintAdmin(admin.ModelAdmin):
-    search_fields = ('flat', 'user')
-    raw_id_fields = ('flat', 'user')
+    search_fields = ('flat', 'author')
+    raw_id_fields = ('flat', 'author')
 
 class OwnerAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'owner_phone_pure')
